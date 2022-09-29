@@ -17,7 +17,19 @@ const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },  {
+    path: 'sidemenu',
+    loadChildren: () => import('./common/sidemenu/sidemenu.module').then( m => m.SidemenuPageModule)
   },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('./common/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+  },
+  {
+    path: 'change-password',
+    loadChildren: () => import('./common/change-password/change-password.module').then( m => m.ChangePasswordPageModule)
+  },
+
 ];
 @NgModule({
   imports: [

@@ -2,6 +2,8 @@
   <app-header header="Users Detail"></app-header>
 </ion-header>
 
+<app-sidemenu></app-sidemenu>
+
 <ion-content>
   <div *ngIf="isLoading | async">
     <app-loader></app-loader>
@@ -10,9 +12,18 @@
     <ion-button expand="block" (click)="onClickOpenModal(false)" fill="outline">New User</ion-button>
   </ion-card>
   <ion-card *ngFor="let item of users;let i = index">
-    <ion-card-header>
-      <ion-card-title class="ion-text-start d-flex align-item-center">User # {{item.userid}}</ion-card-title>
-    </ion-card-header>
+    <ion-row>
+      <ion-col>
+        <ion-card-header>
+          <ion-card-title class="ion-text-start d-flex align-item-center">User # {{item.userid}}</ion-card-title>
+        </ion-card-header>
+      </ion-col>
+      <ion-col class="button_padding">
+        <ion-button class="primary" fill="clear" color="dark" (click)="onClickOpenModal(true,item)">
+          <ion-icon slot="icon-only" class="color-white" name="create-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
     <ion-card-content>
       <ion-row>
         <ion-col>
@@ -32,15 +43,7 @@
             <ion-icon name="mail-outline"></ion-icon> Email : <span>{{item.email}}</span>
           </p>
         </ion-col>
-        <ion-col>
-          <img class="rounded-circle" src={{item.photo}}>
-        </ion-col>
       </ion-row>
     </ion-card-content>
-    <ion-footer class="no-shadow">
-      <ion-button class="primary" fill="clear" color="dark" (click)="onClickOpenModal(true,item)">
-        <ion-icon slot="icon-only" class="color-white" name="create-outline"></ion-icon>
-      </ion-button>
-    </ion-footer>
   </ion-card>
 </ion-content>

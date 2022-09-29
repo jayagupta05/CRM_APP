@@ -1,0 +1,20 @@
+<!-- <ion-buttons>
+  <ion-menu-button autoHide="true"></ion-menu-button>
+</ion-buttons> -->
+<ion-menu side="end" menuId="menu" contentId="main" class="my-menu">
+  <ion-menu-toggle>
+  <ion-header>
+    <ion-toolbar color="medium">
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item>
+        <a routerLink="" (click)="openChangePwd()">Change Password</a>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu-toggle>
+</ion-menu>
+<ion-router-outlet id="main"></ion-router-outlet>
