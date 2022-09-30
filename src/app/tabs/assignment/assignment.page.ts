@@ -13,6 +13,7 @@ import { LoginService } from 'src/app/services/login/login.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { SendNotificationUtility } from 'src/app/utilities/sendNotification-utility';
 import { TaskDetail } from '../task/task.page';
+import { AlertController } from '@ionic/angular';
 
 export class OperationType {
   operationtype: string;
@@ -60,7 +61,8 @@ export class AssignmentPage {
     public accountServices: AccountService,
     public router: Router,
     public sendNotificationUtility: SendNotificationUtility,
-    public loaderService: LoaderService
+    public loaderService: LoaderService,
+    public alertCtrl: AlertController
   ) { }
 
   get formControl() {
@@ -133,19 +135,33 @@ export class AssignmentPage {
     taskAssign.taskassignee = this.formControl
       .at(index)
       .get('assigneeUser').value;
-
-    this.assignmentService
-      .updateTaskDetails(taskAssign)
-      .then((result: ReturnResult<any>) => {
-        if (result.success) {
-          this.getTaskDetails();
-          this.setPushNotification(this.formControl.at(index).get('assigneeUser').value, (
-            this.formControl.at(index).value as TaskAssignmnetModel
-          ).taskid)
-          this.notificationService.showToast<any>(result);
-        } else {
-          this.notificationService.showToast<any>(result);
-        }
+      this.alertCtrl
+      .create({
+        message:
+          'Engineer is going to be assigned for this Task.',
+        buttons: [
+          {
+            text: 'Ok',
+            handler: () => {
+              this.assignmentService
+              .updateTaskDetails(taskAssign)
+              .then((result: ReturnResult<any>) => {
+              if (result.success) {
+                this.getTaskDetails();
+                this.setPushNotification(this.formControl.at(index).get('assigneeUser').value, (
+                this.formControl.at(index).value as TaskAssignmnetModel
+                ).taskid)
+                this.notificationService.showToast<any>(result);
+              } else {
+                this.notificationService.showToast<any>(result);
+              }
+              });
+            },
+          },
+        ],
+      })
+      .then((res) => {
+        res.present();
       });
   }
 

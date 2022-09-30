@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, AlertController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { ReturnResult } from 'src/app/models/return-result';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -38,7 +38,8 @@ export class SubmitStatusComponent implements OnInit {
     public assignmentService: AssignmentService,
     public notificationService: NotificationService,
     public accountServices: AccountService,
-    public loaderService: LoaderService
+    public loaderService: LoaderService,
+    public alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -86,21 +87,40 @@ export class SubmitStatusComponent implements OnInit {
     taskAssign.operationtype = 'STSUPD';
     taskAssign.remark = this.addStatusDetail.value.remark;
     taskAssign.taskassignee = this.accountServices.USER_ID;
-
-    this.assignmentService
-      .updateTaskDetails(taskAssign)
-      .then((result: ReturnResult<any>) => {
-        if (result.success) {
-          this.modalController.dismiss({
-            dismissed: true,
-            loaddata: true,
-          });
-          this.notificationService.showToast<any>(result);
-          this.assignmentService.loader.next(false);
-        } else {
-          this.notificationService.showToast<any>(result);
-          this.assignmentService.loader.next(false);
-        }
+    this.alertCtrl
+      .create({
+        header: 'Confirm Alert',
+        subHeader: 'Are you sure you want to change Status?',
+        message:
+          'After Submit, Status should be changed according to your selection.',
+        buttons: [
+          {
+            text: 'Cancel',
+          },
+          {
+            text: 'Ok',
+            handler: () => {
+              this.assignmentService
+              .updateTaskDetails(taskAssign)
+              .then((result: ReturnResult<any>) => {
+                if (result.success) {
+                  this.modalController.dismiss({
+                    dismissed: true,
+                    loaddata: true,
+                  });
+                  this.notificationService.showToast<any>(result);
+                  this.assignmentService.loader.next(false);
+                } else {
+                  this.notificationService.showToast<any>(result);
+                  this.assignmentService.loader.next(false);
+                }
+                });
+            },
+          },
+        ],
+      })
+      .then((res) => {
+        res.present();
       });
   }
 

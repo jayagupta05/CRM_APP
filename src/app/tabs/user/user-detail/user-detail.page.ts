@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, AlertController } from '@ionic/angular';
 import { ReturnResult } from 'src/app/models/return-result';
 import { UserDetail } from 'src/app/models/userdetail.model';
 import { LoginService } from 'src/app/services/login/login.service';
@@ -38,7 +38,8 @@ export class UserDetailPage {
     public loginService: LoginService,
     public accountServices: AccountService,
     public navParams: NavParams,
-    public loaderService: LoaderService
+    public loaderService: LoaderService,
+    public alertCtrl: AlertController
   ) { }
 
   public async ionViewDidEnter() {
@@ -50,7 +51,6 @@ export class UserDetailPage {
       this.addUserDetail.controls.phoneno.setValue(this.userDetail.phone);
       this.addUserDetail.controls.emailid.setValue(this.userDetail.email);
       this.addUserDetail.controls.enable.setValue(this.userDetail.enabled === 'y' ? true : false);
-
       this.addUserDetail.controls.password.clearValidators();
       this.addUserDetail.controls.password.updateValueAndValidity();
     }
@@ -75,18 +75,38 @@ export class UserDetailPage {
     userDetail.email = this.addUserDetail.value.emailid;
     userDetail.phone = this.addUserDetail.value.phoneno;
     userDetail.operationtype = 'INSERT'
-    this.loginService
-      .getUsers(userDetail)
-      .then((result: ReturnResult<UserDetail[]>) => {
-        if (result.success) {
-          this.modalController.dismiss({
+    this.alertCtrl
+      .create({
+        header: 'Confirm Alert',
+        subHeader: 'Are you sure you want to create or update a user?',
+        message:
+          'After Submit, User details is displayed in User Panel.',
+        buttons: [
+          {
+            text: 'Cancel',
+          },
+          {
+            text: 'Ok',
+            handler: () => {
+            this.loginService
+            .getUsers(userDetail)
+            .then((result: ReturnResult<UserDetail[]>) => {
+            if (result.success) {
+            this.modalController.dismiss({
             dismissed: true,
             loaddata: true,
-          });
-          this.notificationService.showToast<UserDetail[]>(result);
-        } else {
-          this.notificationService.showToast<UserDetail[]>(result);
-        }
+             });
+            this.notificationService.showToast<UserDetail[]>(result);
+            } else {
+            this.notificationService.showToast<UserDetail[]>(result);
+            }
+           });
+            },
+          },
+        ],
+      })
+      .then((res) => {
+        res.present();
       });
   }
 
